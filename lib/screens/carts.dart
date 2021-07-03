@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rokney/custom_widgets/customs_export.dart';
 
+// FOR THE LIST OF ALL THE PRODUCTS ADDED TO CART BY THE LOGGED IN USER
 class CartScreen extends StatefulWidget {
   @override
   _CartScreenState createState() => _CartScreenState();
@@ -17,7 +18,7 @@ class _CartScreenState extends State<CartScreen> {
           ),
           PostContainer(
             action: "Checkout",
-            image: "./assets/images/d1.png",
+            images: const ["./assets/images/d1.png"],
             myPost: false,
             subtitle: "phone",
             username: "Jumia",

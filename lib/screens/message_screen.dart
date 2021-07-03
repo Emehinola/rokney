@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rokney/custom_widgets/color_palette.dart';
 import 'package:rokney/custom_widgets/customs_export.dart';
 import 'package:rokney/screens/carts.dart';
+import 'package:rokney/screens/screens.dart';
 
 class MessageScreen extends StatefulWidget {
   @override
@@ -19,14 +20,15 @@ class _MessageScreenState extends State<MessageScreen>
       initialIndex: 0,
       child: SafeArea(
         child: Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: PreferredSize(
               child: Container(
                 color: ColorPalette().mainColor,
-                child: TabBar(tabs: <Tab>[
+                child: TabBar(isScrollable: false, tabs: <Tab>[
                   Tab(
                     child: Row(
                       children: [
-                        const Text("Messages"),
+                        const Text("Chats"),
                         const SizedBox(
                           width: 7,
                         ),
@@ -66,18 +68,25 @@ class _MessageScreenState extends State<MessageScreen>
           // ignore: prefer_const_constructors
           body: TabBarView(children: [
             Scaffold(
-              backgroundColor: Colors.white,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               body: ListView(
                 children: [
                   const SizedBox(
                     height: 8,
                   ),
-                  CustomTile(
-                    Ordertype: "order",
-                    image: "./assets/images/bg.png",
-                    chatNumber: "1",
-                    name: "Emehinola",
-                    subtitle: "Sent",
+                  InkWell(
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                ChatScreen(username: "Emehinola"))),
+                    child: CustomTile(
+                      Ordertype: "order",
+                      image: "./assets/images/bg.png",
+                      chatNumber: "1",
+                      name: "Emehinola",
+                      subtitle: "Sent",
+                    ),
                   ),
                   Divider(
                     color: ColorPalette().mainColor,

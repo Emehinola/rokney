@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:rokney/custom_widgets/color_palette.dart';
 import 'package:rokney/custom_widgets/customs.dart';
+import 'package:rokney/screens/profile_page.dart';
 import 'package:rokney/screens/screens.dart';
+import 'package:rokney/backends/backends.dart';
 
 class PostContainer extends StatelessWidget {
-  String? username, subtitle, image, action;
+  String? username, subtitle, action, text;
   bool? myPost;
   bool? verified;
+  List<String>? images;
+  UserProfile? userProfile;
 
   PostContainer(
       {this.myPost = false,
+      this.userProfile,
       this.username,
       this.subtitle,
-      this.image,
+      this.images,
+      this.text,
       this.verified,
       this.action});
 
@@ -22,17 +28,38 @@ class PostContainer extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          PostCustomTile(
-              verified: verified,
-              image: image,
-              myPost: myPost,
-              name: "Emehinola",
-              subtitle: "posted by me"),
+          GestureDetector(
+            onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        ProfilePage(userProfile: userProfile))),
+            child: PostCustomTile(
+                verified: verified,
+                profileImage: userProfile!.profileImage,
+                myPost: myPost,
+                name: username,
+                subtitle: "posted by me"),
+          ),
           Container(
               margin: const EdgeInsets.all(5.0),
-              child: const Text(
-                  "Here we sell some technology related stuffs @ affordable cost. Even you can call us for any website deals")),
-          Image.asset(image!),
+              child: Text(
+                  "Here we sell some technology related stuffs @ affordable cost. Even you can call us for any website deals",
+                  style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyText1!.color))),
+          Container(
+            height: 200,
+            width: double.infinity,
+            child: PageView(
+                scrollDirection: Axis.horizontal,
+                children: List<Widget>.generate(
+                  images!.length,
+                  (index) => Image.asset(
+                    images![index],
+                    height: 200,
+                  ),
+                )),
+          ),
           action != null
               ? Material(
                   child: InkWell(
@@ -45,11 +72,11 @@ class PostContainer extends StatelessWidget {
                                   description: "This is a phone",
                                   features:
                                       "Fine and a very neat phone with affordable cost",
-                                  images: const ['./assets/images/d1.png'],
+                                  images: images!,
                                   number_of_product: "3",
                                   price: 32900,
                                   product_name: "Itel S15",
-                                  title: "phone",
+                                  username: username,
                                 ))),
                     child: Container(
                       width: double.infinity,
@@ -69,36 +96,113 @@ class PostContainer extends StatelessWidget {
               : const SizedBox.shrink(),
           Container(
             padding: const EdgeInsets.all(12.0),
-            child: Row(children: const [
-              Icon(
-                Icons.favorite_outline,
-                size: 30,
-                color: Colors.black,
+            child: Row(children: [
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  child: Icon(
+                    Icons.favorite_outline,
+                    size: 30,
+                    color: Theme.of(context).textTheme.bodyText1!.color,
+                  ),
+                ),
               ),
-              Text("1.2k+"),
-              SizedBox(width: 7),
-              Icon(Icons.comment),
-              Text("300")
+              Text(
+                "1.2k+",
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyText1!.color),
+              ),
+              const SizedBox(width: 7),
+              Icon(
+                Icons.comment,
+                color: Theme.of(context).textTheme.bodyText1!.color,
+              ),
+              Text("300",
+                  style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyText1!.color)),
+              const Expanded(child: SizedBox()),
+              Container(
+                padding: const EdgeInsets.all(10.0),
+                alignment: Alignment.center,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      height: 40,
+                      width: 80,
+                      alignment: Alignment.center,
+                      child: const Text(
+                        "price",
+                        style: TextStyle(color: Colors.white, fontSize: 20),
+                      ),
+                      decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(15),
+                              bottomLeft: Radius.circular(15)),
+                          color: Theme.of(context).primaryColor),
+                    ),
+                    const SizedBox(
+                      width: 2.0,
+                    ),
+                    Container(
+                      height: 40,
+                      width: 80,
+                      alignment: Alignment.center,
+                      child: const Text(
+                        "\$4,021",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.only(
+                              topRight: Radius.circular(15),
+                              bottomRight: Radius.circular(15)),
+                          color: ColorPalette().mainColor),
+                    )
+                  ],
+                ),
+              ),
             ]),
           ),
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 10.0),
+            margin: const EdgeInsets.symmetric(horizontal: 10.0),
             child: TextField(
               minLines: 1,
               maxLines: 2,
               autofocus: false,
+              style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyText1!.color),
               textInputAction: TextInputAction.newline,
               decoration: InputDecoration(
                   suffixIcon: IconButton(
                       onPressed: () {
                         // TODO
                       },
-                      icon: const Icon(Icons.send)),
-                  hintText: "What do feel about this?",
+                      icon: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                              child: Icon(Icons.send,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .color)))),
+                  hintText: "What do you feel about this?",
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: const BorderSide(
+                        color: Colors.grey,
+                      )),
+                  hintStyle: const TextStyle(color: Colors.grey),
                   border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
                       borderRadius: BorderRadius.circular(30))),
             ),
           ),
+          const SizedBox(
+            height: 20,
+          )
         ],
       ),
     );
@@ -106,14 +210,14 @@ class PostContainer extends StatelessWidget {
 }
 
 class PostCustomTile extends StatelessWidget {
-  String? name, subtitle, image;
+  String? name, subtitle, profileImage;
   bool? myPost, verified;
 
   PostCustomTile(
       {this.myPost = false,
       this.name,
       this.subtitle,
-      this.image,
+      this.profileImage,
       this.verified = false});
 
   @override
@@ -127,12 +231,14 @@ class PostCustomTile extends StatelessWidget {
               children: [
                 Container(
                     decoration: BoxDecoration(
+                      border: Border.all(
+                          color: ColorPalette().mainColor, width: 1.0),
                       borderRadius: BorderRadius.circular(80),
                     ),
                     height: 50,
                     width: 50,
                     child: CircleAvatar(
-                      backgroundImage: AssetImage(image!),
+                      backgroundImage: AssetImage(profileImage!),
                     )),
                 const SizedBox(
                   width: 10,
@@ -144,7 +250,10 @@ class PostCustomTile extends StatelessWidget {
                       children: [
                         Text(
                           name!,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color:
+                                  Theme.of(context).textTheme.bodyText1!.color),
                         ),
                         const SizedBox(
                           width: 5,
@@ -163,7 +272,9 @@ class PostCustomTile extends StatelessWidget {
                     ),
                     Text(
                       subtitle!,
-                      style: const TextStyle(fontSize: 12),
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context).textTheme.subtitle1!.color),
                     )
                   ],
                 ),
@@ -190,7 +301,10 @@ class PostCustomTile extends StatelessWidget {
                     const SizedBox(
                       width: 15,
                     ),
-                    const Icon(Icons.shopping_cart_outlined),
+                    Icon(
+                      Icons.shopping_cart_outlined,
+                      color: Theme.of(context).textTheme.bodyText1!.color,
+                    ),
                     const SizedBox(
                       width: 15,
                     ),

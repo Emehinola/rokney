@@ -11,8 +11,9 @@ class WelcomePage extends StatelessWidget {
       double screenWidth = constraints.maxWidth;
 
       return Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Container(
-          color: Colors.white,
+          color: Theme.of(context).scaffoldBackgroundColor,
           height: screenHeight,
           width: screenWidth,
           child: Center(
@@ -26,14 +27,15 @@ class WelcomePage extends StatelessWidget {
                       image: DecorationImage(
                           image: AssetImage("./assets/images/social.png"))),
                 ),
-                InkWell(
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) => Login())),
-                  child: CustomButton(
-                    text: "GET STARTED >>>",
-                  ),
+                Material(
+                  color: Colors.transparent,
+                  child: ElevatedButton(
+                      style: ButtonStyle(),
+                      onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (BuildContext context) => Login())),
+                      child: Text("GET STARTED >>>")),
                 )
               ],
             ),

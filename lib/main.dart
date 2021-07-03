@@ -1,8 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:rokney/custom_widgets/color_palette.dart';
 import 'package:rokney/screens/welcome.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  return runApp(ChangeNotifierProvider<ThemeNotifier>(
+      create: (_) => ThemeNotifier(), child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -11,13 +16,13 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Rokney',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.deepOrange,
-      ),
-      home: WelcomePage(),
-    );
+    return Consumer<ThemeNotifier>(builder: (context, theme, _) {
+      return MaterialApp(
+        title: 'Rokney',
+        debugShowCheckedModeBanner: false,
+        theme: theme.getTheme(),
+        home: WelcomePage(),
+      );
+    });
   }
 }

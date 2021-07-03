@@ -13,7 +13,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
         double height = constraints.maxHeight; // the height of the screen
@@ -37,21 +37,31 @@ class _LoginState extends State<Login> {
                   width: width * 0.8,
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                      image: const DecorationImage(
-                          fit: BoxFit.cover,
-                          image: AssetImage("./assets/images/bg.png")),
-                      color: Colors.white,
+                      // image: const DecorationImage(
+                      //     fit: BoxFit.cover,
+                      //     image: AssetImage("./assets/images/bg.png")),
+                      color: Colors.transparent,
                       borderRadius: BorderRadius.circular(12)),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const TextField(
-                          style: TextStyle(color: Colors.black),
+                      TextField(
+                          style: TextStyle(
+                              color:
+                                  Theme.of(context).textTheme.bodyText1!.color),
                           decoration: InputDecoration(
+                            enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1!
+                                            .color ??
+                                        Colors.green)),
                             hintText: "email",
-                            prefixIcon: Icon(
+                            hintStyle: const TextStyle(color: Colors.grey),
+                            prefixIcon: const Icon(
                               Icons.email,
-                              color: Colors.white,
+                              color: Colors.green,
                             ),
                           )),
                       SizedBox(
@@ -59,12 +69,22 @@ class _LoginState extends State<Login> {
                       ),
                       TextField(
                           obscureText: true,
-                          style: TextStyle(color: Colors.black),
+                          style: TextStyle(
+                              color:
+                                  Theme.of(context).textTheme.bodyText1!.color),
                           decoration: InputDecoration(
+                            enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(
+                                    color: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1!
+                                            .color ??
+                                        Colors.green)),
                             hintText: "password",
-                            prefixIcon: Icon(
+                            hintStyle: const TextStyle(color: Colors.grey),
+                            prefixIcon: const Icon(
                               Icons.password,
-                              color: Colors.white,
+                              color: Colors.green,
                             ),
                           )),
                       Container(),
@@ -90,10 +110,9 @@ class _LoginState extends State<Login> {
                 const SizedBox(
                   height: 30,
                 ),
-                const Text(
-                  "Dont have an account yet?",
-                  style: TextStyle(color: Colors.white),
-                ),
+                Text("Don't have an account yet?",
+                    style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyText1!.color)),
                 InkWell(
                   onTap: () => Navigator.push(
                       context,
@@ -106,10 +125,9 @@ class _LoginState extends State<Login> {
                 SizedBox(
                   height: height * 0.02,
                 ),
-                Text(
-                  "Forgot your password?",
-                  style: TextStyle(color: Colors.white),
-                ),
+                Text("Forgot your password?",
+                    style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyText1!.color)),
                 InkWell(
                   onTap: () => Navigator.push(
                       context,
@@ -117,7 +135,7 @@ class _LoginState extends State<Login> {
                           builder: (BuildContext context) =>
                               RecoverPassword())),
                   child: CustomButton(
-                    text: "RECOVER HERE",
+                    text: "RECOVER PASSWORD",
                   ),
                 )
               ],

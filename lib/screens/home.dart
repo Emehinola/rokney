@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rokney/custom_widgets/post_widget.dart';
+import 'package:rokney/backends/backends.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -7,42 +8,30 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  // final PageStorageKey _key = const PageStorageKey(
+  //     'home'); // for retaining the state of the scrolling of the page
+
+  List usersProfileList =
+      DatabaseMethod().getUsers(); // gets the list of all the users' profile
+
+  List<Post> posts = DatabaseMethod().getPosts();
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: ListView(
-        children: [
-          PostContainer(
-            myPost: true,
-            verified: true,
-            image: "./assets/images/ecc2.jpg",
-            subtitle: "Sponsored",
-            username: "Rokney.com",
-          ),
-          const Divider(
-            color: Colors.black,
-          ),
-          PostContainer(
-            myPost: false,
-            verified: false,
-            image: "./assets/images/online-shopping.jpg",
-            subtitle: "Fitness",
-            username: "BenzyFitness",
-          ),
-          const Divider(
-            color: Colors.black,
-          ),
-          PostContainer(
-            myPost: true,
-            verified: true,
-            image: "./assets/images/mult.png",
-            subtitle: "Facebook",
-            username: "Social Media",
-          )
-        ],
-      ),
+      // key: _key,
+      body: ListView.builder(itemBuilder: (BuildContext context, int index) {
+        return PostContainer(
+          userProfile: usersProfileList[index],
+          myPost: true,
+          verified: true,
+          images: posts[index].images,
+          text: posts[index].text,
+          subtitle: "Sponsored",
+          username: usersProfileList[index].username,
+        );
+      }),
     );
   }
 }

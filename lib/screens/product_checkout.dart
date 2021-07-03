@@ -4,7 +4,7 @@ import 'package:rokney/custom_widgets/customs_export.dart';
 class ProductCheckoutScreen extends StatefulWidget {
   final String? description,
       features,
-      title,
+      username,
       product_name,
       category,
       number_of_product;
@@ -21,7 +21,7 @@ class ProductCheckoutScreen extends StatefulWidget {
       this.number_of_product,
       this.price,
       this.product_name,
-      this.title});
+      this.username});
   @override
   _ProductCheckoutScreenState createState() => _ProductCheckoutScreenState();
 }
@@ -30,6 +30,7 @@ class _ProductCheckoutScreenState extends State<ProductCheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: ColorPalette().mainColor,
         leading: IconButton(
@@ -47,7 +48,7 @@ class _ProductCheckoutScreenState extends State<ProductCheckoutScreen> {
             Container(
               height: height,
               width: width,
-              color: Colors.white,
+              color: Theme.of(context).scaffoldBackgroundColor,
               child: SingleChildScrollView(
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,10 +56,10 @@ class _ProductCheckoutScreenState extends State<ProductCheckoutScreen> {
                     Container(
                       margin: const EdgeInsets.only(top: 10),
                       child: PostCheckoutContainer(
-                        image: './assets/images/social.png',
+                        image: widget.images![0],
                         myPost: false,
                         subtitle: widget.category,
-                        username: "Jumia",
+                        username: widget.username,
                         verified: true,
                       ),
                     ),
@@ -112,37 +113,54 @@ class _ProductCheckoutScreenState extends State<ProductCheckoutScreen> {
                     ),
                     Container(
                       padding: const EdgeInsets.all(10),
-                      child: const Text("Description",
+                      child: Text("Description",
                           style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          )),
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .color)),
                     ),
                     Container(
                       padding: const EdgeInsets.all(10),
-                      child: const Text(
-                          "The description is here for us to be able to see what the product is all about "),
+                      child: Text(
+                        "The description is here for us to be able to see what the product is all about ",
+                        style: TextStyle(
+                            color:
+                                Theme.of(context).textTheme.bodyText1!.color),
+                      ),
                     ),
                     Container(
                       padding: const EdgeInsets.all(10),
-                      child: const Text("Features",
+                      child: Text("Features",
                           style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          )),
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .color)),
                     ),
                     Container(
                       padding: const EdgeInsets.all(10),
-                      child: const Text(
-                          "Good and durable battery life\nBeautiful design\nCheap and affordable\n2-years warranty is given"),
+                      child: Text(
+                        "Good and durable battery life\nBeautiful design\nCheap and affordable\n2-years warranty is given",
+                        style: TextStyle(
+                            color:
+                                Theme.of(context).textTheme.bodyText1!.color),
+                      ),
                     ),
                     Container(
                       padding: const EdgeInsets.all(10),
-                      child: const Text("Delivery location",
+                      child: Text("Delivery location",
                           style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          )),
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .color)),
                     ),
                     Container(
                         padding: const EdgeInsets.all(10),
@@ -150,7 +168,14 @@ class _ProductCheckoutScreenState extends State<ProductCheckoutScreen> {
                           textInputAction: TextInputAction.newline,
                           maxLines: 5,
                           minLines: 4,
+                          style: TextStyle(
+                              color:
+                                  Theme.of(context).textTheme.bodyText1!.color),
                           decoration: InputDecoration(
+                              enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide:
+                                      const BorderSide(color: Colors.grey)),
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12))),
                         )),
@@ -201,27 +226,39 @@ class PostCheckoutContainer extends StatelessWidget {
         children: [
           PostCustomTile(
               verified: verified,
-              image: image,
+              profileImage: image,
               myPost: myPost,
               name: username,
               subtitle: subtitle),
           Container(
               margin: const EdgeInsets.all(5.0),
-              child: const Text(
-                  "Here we sell some technology related stuffs @ affordable cost. Even you can call us for any website deals")),
+              child: Text(
+                "Here we sell some technology related stuffs @ affordable cost. Even you can call us for any website deals",
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyText1!.color),
+              )),
           Image.asset(image!),
           Container(
             padding: const EdgeInsets.all(12.0),
-            child: Row(children: const [
-              Icon(
-                Icons.favorite_outline,
-                size: 30,
-                color: Colors.black,
+            child: Row(children: [
+              Icon(Icons.favorite_outline,
+                  size: 30,
+                  color: Theme.of(context).textTheme.bodyText1!.color),
+              Text(
+                "1.2k+",
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyText1!.color),
               ),
-              Text("1.2k+"),
-              SizedBox(width: 7),
-              Icon(Icons.comment),
-              Text("300")
+              const SizedBox(width: 7),
+              Icon(
+                Icons.comment,
+                color: Theme.of(context).textTheme.bodyText1!.color,
+              ),
+              Text(
+                "300",
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyText1!.color),
+              )
             ]),
           ),
           Container(
@@ -230,15 +267,26 @@ class PostCheckoutContainer extends StatelessWidget {
               minLines: 1,
               maxLines: 2,
               textInputAction: TextInputAction.newline,
+              style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyText1!.color),
               decoration: InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: const BorderSide(color: Colors.grey)),
                   suffixIcon: IconButton(
                       onPressed: () {
                         // TODO
                       },
-                      icon: const Icon(Icons.send)),
+                      icon: const Icon(
+                        Icons.send,
+                        color: Colors.white,
+                      )),
                   hintText: "What do feel about this?",
+                  hintStyle: TextStyle(
+                      color: Theme.of(context).textTheme.subtitle1!.color),
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30))),
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide(color: Colors.grey))),
             ),
           ),
         ],

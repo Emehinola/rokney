@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rokney/custom_widgets/color_palette.dart';
 import 'package:rokney/custom_widgets/customs.dart';
+import 'package:rokney/screens/screens.dart';
 
 // custom button
 class CustomButton extends StatelessWidget {
@@ -88,14 +89,14 @@ class IconLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(top: 15),
-      height: 40,
+      height: 30,
       width: 50,
       child: Stack(
         children: [
           Container(
             decoration: const BoxDecoration(
                 border: Border(bottom: BorderSide(color: Colors.white))),
-            child: Icon(icon, size: 35),
+            child: Icon(icon, size: 30),
           ),
           label != null
               ? Positioned(
@@ -165,8 +166,17 @@ class CustomTile extends StatelessWidget {
                   ),
                   height: 60,
                   width: 60,
-                  child: CircleAvatar(
-                    backgroundImage: AssetImage(image!),
+                  child: InkWell(
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) => ProfileImage())),
+                    child: Hero(
+                      tag: 'image',
+                      child: CircleAvatar(
+                        backgroundImage: AssetImage(image!),
+                      ),
+                    ),
                   )),
               const SizedBox(
                 width: 10,
@@ -176,9 +186,14 @@ class CustomTile extends StatelessWidget {
                 children: [
                   Text(
                     name!,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.bodyText1!.color),
                   ),
-                  Text(subtitle!)
+                  const SizedBox(height: 5.0),
+                  Text(subtitle!,
+                      style: TextStyle(
+                          color: Theme.of(context).textTheme.subtitle1!.color))
                 ],
               ),
             ],
@@ -188,7 +203,9 @@ class CustomTile extends StatelessWidget {
                   children: [
                     Text(
                       Ordertype!,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).textTheme.bodyText1!.color),
                     ),
                     const SizedBox(
                       width: 10,

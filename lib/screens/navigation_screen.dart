@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:rokney/backends/models.dart';
 import 'package:rokney/custom_widgets/customs.dart';
 import 'package:rokney/screens/profile_page.dart';
 import 'package:rokney/custom_widgets/customs_export.dart';
 import 'package:rokney/screens/screens.dart';
+import 'package:rokney/screens/settings.dart';
 
 class NavigationScreen extends StatefulWidget {
   @override
@@ -14,6 +16,8 @@ class _NavigationScreenState extends State<NavigationScreen>
     with SingleTickerProviderStateMixin {
   ScrollController? _scrollController;
   bool? isScrolledUp;
+
+  final PageStorageBucket _bucket = PageStorageBucket();
 
   @override
   void initState() {
@@ -53,18 +57,53 @@ class _NavigationScreenState extends State<NavigationScreen>
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(
+          // for the header
           height: 200,
           width: double.infinity,
           color: ColorPalette().mainColor,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Align(
+                alignment: Alignment.bottomLeft,
+                child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 5.0),
+                    height: 50,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        InkWell(
+                          child: const Chip(
+                            label: Text("Settings"),
+                            avatar: Icon(Icons.settings),
+                          ),
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      SettingScreen())),
+                        ),
+                        const Chip(
+                          label: Text("Logout"),
+                          avatar: Icon(Icons.exit_to_app),
+                        ),
+                      ],
+                    )),
+              ),
+            ],
+          ),
         ),
         Container(
           height: size.height - 200,
+          color: Theme.of(context).scaffoldBackgroundColor,
           child: ListView(children: [
             Container(
               padding: const EdgeInsets.all(8.0),
-              child: const Text(
+              child: Text(
                 "Bookmarks",
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.bodyText1!.color),
               ),
             ),
             CustomTile(
@@ -91,16 +130,20 @@ class _NavigationScreenState extends State<NavigationScreen>
             Align(
                 alignment: Alignment.center,
                 child: Container(
-                  child: const Text(
+                  child: Text(
                     "Read more",
-                    style: TextStyle(decoration: TextDecoration.underline),
+                    style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        color: Theme.of(context).textTheme.bodyText1!.color),
                   ),
                 )),
             Container(
               padding: const EdgeInsets.all(8.0),
-              child: const Text(
+              child: Text(
                 "Carts | How tos",
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.bodyText1!.color),
               ),
             ),
             CustomTile(
@@ -129,9 +172,15 @@ class _NavigationScreenState extends State<NavigationScreen>
       ])),
       floatingActionButton: isScrolledUp != true
           ? FloatingActionButton(
-              backgroundColor: Colors.deepOrange,
+              backgroundColor: Theme.of(context).primaryColor,
               child: const Icon(Icons.add),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            PostCreationNavigation()));
+              },
             )
           : const SizedBox.shrink(),
       body: DefaultTabController(
@@ -170,55 +219,75 @@ class _NavigationScreenState extends State<NavigationScreen>
                     style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                   ),
                   actions: <Widget>[
-                    InkWell(
-                      child: IconLabel(
-                        icon: Icons.search,
-                        label: null,
-                      ),
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  SearchScreen())),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    InkWell(
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  MessageScreen())),
-                      child: IconLabel(
-                        icon: Icons.chat,
-                        label: "2",
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        child: IconLabel(
+                          icon: Icons.search,
+                          label: null,
+                        ),
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    SearchScreen())),
                       ),
                     ),
                     const SizedBox(
                       width: 10,
                     ),
-                    InkWell(
-                      child: IconLabel(
-                        icon: Icons.person_pin,
-                        label: null,
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    MessageScreen())),
+                        child: IconLabel(
+                          icon: Icons.chat,
+                          label: "2",
+                        ),
                       ),
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  ProfilePage())),
                     ),
                     const SizedBox(
                       width: 10,
-                    )
+                    ),
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        child: IconLabel(
+                          icon: Icons.person_pin,
+                          label: null,
+                        ),
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (BuildContext context) => ProfilePage(
+                                      userProfile: UserProfile(
+                                          about:
+                                              '"Talks about #technology, #programming, #webdevelopment, and #mobiledevelopment"',
+                                          address: '"University of Lagos, Unilag\n Nigeria."',
+                                          followers: 32134,
+                                          following: 90,
+                                          profileImage: './assets/images/d1.png',
+                                          professions: [
+                                            'Web dev',
+                                            'Build robots'
+                                          ]),
+                                    ))),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
                   ],
-                  bottom: const TabBar(
+                  bottom: TabBar(
                       isScrollable: true,
-                      indicatorColor: Colors.deepOrange,
+                      indicatorColor: Theme.of(context).primaryColor,
                       indicatorPadding: EdgeInsets.only(top: 4.0),
-                      indicatorWeight: 5.0,
-                      tabs: <Widget>[
+                      indicatorWeight: 3.0,
+                      tabs: const <Widget>[
                         TabContainer(
                           icon: Icons.home,
                           text: "Home",

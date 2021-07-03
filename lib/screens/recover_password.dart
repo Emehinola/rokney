@@ -12,7 +12,7 @@ class _RecoverPasswordState extends State<RecoverPassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
         double height = constraints.maxHeight; // the height of the screen
@@ -33,7 +33,7 @@ class _RecoverPasswordState extends State<RecoverPassword> {
               Container(
                 // height: height * 0.5,
                 width: width * 0.8,
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12)),
@@ -41,10 +41,23 @@ class _RecoverPasswordState extends State<RecoverPassword> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     TextField(
-                        style: TextStyle(color: Colors.black),
+                        style: TextStyle(
+                            color:
+                                Theme.of(context).textTheme.bodyText1!.color),
                         decoration: InputDecoration(
+                          enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .color ??
+                                      Colors.green)),
                           hintText: "email",
-                          prefixIcon: Icon(Icons.email),
+                          hintStyle: const TextStyle(color: Colors.grey),
+                          prefixIcon: const Icon(
+                            Icons.email,
+                            color: Colors.green,
+                          ),
                         )),
                     Container(),
                     SizedBox(

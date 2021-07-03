@@ -42,9 +42,12 @@ class _SearchScreenState extends State<SearchScreen> {
                   hintStyle: TextStyle(color: Colors.grey),
                 ),
               )),
-              const Icon(
-                Icons.search,
-                color: Colors.white,
+              IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.search,
+                  color: Colors.white,
+                ),
               )
             ],
           ),
