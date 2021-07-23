@@ -1,11 +1,17 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:rokney/backends/models.dart';
 import 'package:rokney/custom_widgets/customs.dart';
 import 'package:rokney/screens/profile_page.dart';
 import 'package:rokney/custom_widgets/customs_export.dart';
 import 'package:rokney/screens/screens.dart';
 import 'package:rokney/screens/settings.dart';
+import 'package:rokney/backends/backends.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class NavigationScreen extends StatefulWidget {
   @override
@@ -17,10 +23,56 @@ class _NavigationScreenState extends State<NavigationScreen>
   ScrollController? _scrollController;
   bool? isScrolledUp;
 
+  StreamSubscription? subscription;
+
+  // scaffold key
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
   final PageStorageBucket _bucket = PageStorageBucket();
+
+  GraphQLConfiguration _graphQLConfiguration =
+      GraphQLConfiguration(); // for controlling the HiveStore to log out the user
+
+  QueryMutation _queryMutation = QueryMutation();
+
+  // for querying database
+  DatabaseMethod _databaseMethod = DatabaseMethod();
+  CheckInternet internet =
+      CheckInternet(); // class defined in internet.dart file, for getting connection's state
+
+  var client = GraphQLConfiguration().clientToQuery();
+
+  // logout the loggedIn user
+  void logOut(BuildContext context) {
+    _graphQLConfiguration.box
+      ..put('loggedIn', false)
+      ..put('myEmail', null).then((_) => Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (BuildContext context) => Login())));
+  }
 
   @override
   void initState() {
+    subscription = Connectivity().onConnectivityChanged.listen((event) {
+      internet.checkConnection(event).then((value) {
+        // checks if user is connected to internet source like data or wifi
+        if (value) {
+          // check if internet is not accessible, maybe no data sub, lol
+          internet.checkInternet().then((value) {
+            if (value) {
+              print("confirmed");
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  snackBar("No data connection on device", Icons.info));
+            }
+          });
+        } else {
+          // if there is no internet connection
+          ScaffoldMessenger.of(context).showSnackBar(
+              snackBar("No internet connection on device", Icons.info));
+        }
+      });
+    });
+
     isScrolledUp = false;
     _scrollController = ScrollController();
     _scrollController?.addListener(() {
@@ -43,6 +95,7 @@ class _NavigationScreenState extends State<NavigationScreen>
   void dispose() {
     // _tabController.dispose();
     _scrollController?.dispose();
+    subscription!.cancel();
     super.dispose();
   }
 
@@ -53,6 +106,7 @@ class _NavigationScreenState extends State<NavigationScreen>
     // FocusScope.of(context).unfocus(); // for removing the focus of the text input field
 
     return Scaffold(
+      key: scaffoldKey,
       drawer: Drawer(
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -83,10 +137,13 @@ class _NavigationScreenState extends State<NavigationScreen>
                                   builder: (BuildContext context) =>
                                       SettingScreen())),
                         ),
-                        const Chip(
-                          label: Text("Logout"),
-                          avatar: Icon(Icons.exit_to_app),
-                        ),
+                        GestureDetector(
+                          onTap: () => logOut(context),
+                          child: const Chip(
+                            label: Text("Logout"),
+                            avatar: Icon(Icons.exit_to_app),
+                          ),
+                        )
                       ],
                     )),
               ),
@@ -256,27 +313,15 @@ class _NavigationScreenState extends State<NavigationScreen>
                     Material(
                       color: Colors.transparent,
                       child: InkWell(
-                        child: IconLabel(
-                          icon: Icons.person_pin,
-                          label: null,
-                        ),
-                        onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (BuildContext context) => ProfilePage(
-                                      userProfile: UserProfile(
-                                          about:
-                                              '"Talks about #technology, #programming, #webdevelopment, and #mobiledevelopment"',
-                                          address: '"University of Lagos, Unilag\n Nigeria."',
-                                          followers: 32134,
-                                          following: 90,
-                                          profileImage: './assets/images/d1.png',
-                                          professions: [
-                                            'Web dev',
-                                            'Build robots'
-                                          ]),
-                                    ))),
-                      ),
+                          child: IconLabel(
+                            icon: Icons.person_pin,
+                            label: null,
+                          ),
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      ProfilePage()))),
                     ),
                     const SizedBox(
                       width: 10,

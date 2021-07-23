@@ -30,13 +30,17 @@ class _RecoverPasswordState extends State<RecoverPassword> {
                 height: height * 0.3,
                 width: width * 0.3,
               ),
+              Text(
+                'Recover your password here...',
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyText1!.color),
+              ),
               Container(
                 // height: height * 0.5,
                 width: width * 0.8,
                 padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12)),
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(12)),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [

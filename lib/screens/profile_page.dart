@@ -1,13 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:rokney/backends/backends.dart';
 import 'package:rokney/backends/models.dart';
 import 'package:rokney/custom_widgets/customs_export.dart';
 import 'package:rokney/screens/screens.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
-class ProfilePage extends StatelessWidget {
-  // INSTANCE VARIABLES
-  UserProfile? userProfile; // the data of the user's profile are here
+class ProfilePage extends StatefulWidget {
+  // INSTANCE VARIABLE
 
-  ProfilePage({required this.userProfile});
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  QueryMutation _queryMutation = QueryMutation();
+  String email = GraphQLConfiguration().box.get('myEmail');
+  @override
+  void dispose() async {
+    // await Hive.deleteBoxFromDisk('account');
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,12 +51,11 @@ class ProfilePage extends StatelessWidget {
                             MaterialPageRoute(
                                 builder: (BuildContext context) =>
                                     ProfileImage())),
-                        child: Hero(
+                        child: const Hero(
                           tag: 'image',
                           child: CircleAvatar(
-                            backgroundImage:
-                                AssetImage(userProfile!.profileImage!),
-                          ),
+                              backgroundImage: NetworkImage(
+                                  'http://10.0.2.2:8000/media/default.png')),
                         ),
                       ),
                       decoration: BoxDecoration(
@@ -74,12 +85,22 @@ class ProfilePage extends StatelessWidget {
                       top: 70,
                       child: Row(
                         children: [
-                          const Text(
-                            "Update Profile",
-                            style: TextStyle(
-                                decoration: TextDecoration.underline,
-                                fontSize: 24,
-                                color: Colors.white),
+                          Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              child: const Text(
+                                "Update Profile",
+                                style: TextStyle(
+                                    decoration: TextDecoration.underline,
+                                    fontSize: 24,
+                                    color: Colors.white),
+                              ),
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          ProfileUpdateScreen())),
+                            ),
                           ),
                           const SizedBox(
                             width: 5,
@@ -103,82 +124,121 @@ class ProfilePage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        userProfile!.username!,
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color:
-                                Theme.of(context).textTheme.bodyText1!.color),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(userProfile!.about!,
-                          style: TextStyle(
-                              color: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1!
-                                  .color)),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        userProfile!.address!,
-                        style: TextStyle(
-                            color:
-                                Theme.of(context).textTheme.bodyText1!.color),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            "${userProfile!.followers} rokners",
-                            style: TextStyle(
-                                color: ColorPalette().mainColor,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            " * ${userProfile!.following} rok",
-                            style: TextStyle(
-                                color: ColorPalette().mainColor,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      CustomButton(
-                        text: "Go Premium",
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        height: 80,
-                        width: size.width,
-                        child: ListView(
-                            scrollDirection: Axis.horizontal,
-                            children: List<Widget>.generate(
-                              userProfile!.professions!.length,
-                              (index) => Container(
-                                padding: const EdgeInsets.all(10),
-                                width: size.width * 0.8,
-                                height: 70,
-                                decoration: BoxDecoration(
-                                    color: Colors.grey[350],
-                                    borderRadius: BorderRadius.circular(12)),
-                                child: Text(userProfile!.professions![index],
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                    )),
-                              ),
-                            )),
-                      ),
+                      Query(
+                          // Widget for querying the database for profile
+                          options: QueryOptions(
+                              document: gql(_queryMutation.userInfo(email)),
+                              pollInterval: const Duration(seconds: 5)),
+                          builder: (
+                            QueryResult result, {
+                            VoidCallback? refetch,
+                            FetchMore? fetchMore,
+                          }) {
+                            var data = result.data!['getUser']['profile'];
+                            var username = result.data!['getUser']['username'];
+                            List<String> professions = data['professions'].split(
+                                ','); // changes the professions into  a List where they're separated by comma(,)
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  username,
+                                  style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).primaryColor),
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Text(data['about'],
+                                    style: TextStyle(
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1!
+                                            .color)),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  data['address'],
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .color),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      "${data['followers']} rokners",
+                                      style: TextStyle(
+                                          color: ColorPalette().mainColor,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      " * ${data['following']} rok",
+                                      style: TextStyle(
+                                          color: ColorPalette().mainColor,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                CustomButton(
+                                  text: "Go Premium",
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                data['professions']
+                                        .toString()
+                                        .isNotEmpty // Doesn't show the widget if profession is empty
+                                    ? Container(
+                                        // for professions and specialities
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10),
+                                        height: 80,
+                                        width: size.width,
+                                        child: ListView.separated(
+                                            scrollDirection: Axis.horizontal,
+                                            separatorBuilder:
+                                                (BuildContext context,
+                                                    int index) {
+                                              return const SizedBox(width: 10);
+                                            },
+                                            itemCount: professions.length,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              return Container(
+                                                padding:
+                                                    const EdgeInsets.all(10),
+                                                width: size.width * 0.8,
+                                                height: 70,
+                                                decoration: BoxDecoration(
+                                                    color: Colors.grey[350],
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12)),
+                                                child: Align(
+                                                  alignment: Alignment.center,
+                                                  child: Text(
+                                                      professions[index],
+                                                      style: const TextStyle(
+                                                        fontSize: 25,
+                                                      )),
+                                                ),
+                                              );
+                                            }))
+                                    : const SizedBox.shrink(),
+                              ],
+                            );
+                          }),
                       Container(
                         height: 10,
                         width: size.width,
@@ -187,9 +247,13 @@ class ProfilePage extends StatelessWidget {
                       const SizedBox(
                         height: 5,
                       ),
-                      const Text(
+                      Text(
+                        // for the posts the logged in user
                         "My posts",
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color:
+                                Theme.of(context).textTheme.bodyText1!.color),
                       ),
                       const SizedBox(
                         height: 10,
@@ -197,6 +261,16 @@ class ProfilePage extends StatelessWidget {
 
                       // list of posts by the user
                       PostContainer(
+                        text: 'My personal post',
+                        userProfile: UserProfile(
+                            about:
+                                '"Talks about #technology, #programming, #webdevelopment, and #mobiledevelopment"',
+                            address: '"University of Lagos, Unilag\n Nigeria."',
+                            followers: 32134,
+                            following: 90,
+                            username: 'Jumia',
+                            profileImage: './assets/images/d1.png',
+                            professions: ['Web dev', 'Build robots']),
                         myPost:
                             false, // this tells if the post belongs to the loggedIn user or not
                         images: const ["./assets/images/social.png"],

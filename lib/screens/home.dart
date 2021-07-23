@@ -21,17 +21,19 @@ class _HomeState extends State<Home> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       // key: _key,
-      body: ListView.builder(itemBuilder: (BuildContext context, int index) {
-        return PostContainer(
-          userProfile: usersProfileList[index],
-          myPost: true,
-          verified: true,
-          images: posts[index].images,
-          text: posts[index].text,
-          subtitle: "Sponsored",
-          username: usersProfileList[index].username,
-        );
-      }),
+      body: ListView.builder(
+          itemCount: 5,
+          itemBuilder: (BuildContext context, int index) {
+            return PostContainer(
+              userProfile: usersProfileList[index],
+              myPost: true,
+              verified: true,
+              images: posts[index].images,
+              text: posts[index].text,
+              subtitle: "Sponsored",
+              username: usersProfileList[index].username,
+            );
+          }),
     );
   }
 }

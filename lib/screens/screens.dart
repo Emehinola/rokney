@@ -1,5 +1,6 @@
 // for exporting all the needed programs
 
+export 'package:rokney/screens/navigation_screen.dart';
 export 'package:rokney/screens/welcome.dart';
 export 'package:rokney/screens/login.dart';
 export 'package:rokney/screens/signup.dart';
@@ -14,3 +15,4 @@ export 'package:rokney/screens/chat_screen.dart';
 export 'package:rokney/screens/profile_image.dart';
 export 'package:rokney/screens/post_creation_navigation.dart';
 export 'package:rokney/screens/settings.dart';
+export 'package:rokney/screens/profile_update.dart';

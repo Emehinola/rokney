@@ -221,3 +221,26 @@ class CustomTile extends StatelessWidget {
     );
   }
 }
+
+// build snackbar
+SnackBar snackBar(String message, IconData icon) {
+  return SnackBar(
+    backgroundColor: Colors.white,
+    duration: const Duration(seconds: 3),
+    content: Container(
+      decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+              topRight: Radius.circular(12), topLeft: Radius.circular(12))),
+      height: 30,
+      width: double.infinity,
+      child: Center(
+          child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Icon(icon),
+          Text(message, style: const TextStyle(fontSize: 16, color: Colors.red))
+        ],
+      )),
+    ),
+  );
+}

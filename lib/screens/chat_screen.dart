@@ -121,10 +121,14 @@ class _ChatScreenState extends State<ChatScreen> {
                         maxLines: 3,
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30),
+                                borderSide: BorderSide(color: Colors.white)),
                             contentPadding:
                                 const EdgeInsets.symmetric(vertical: 3.0),
                             prefixIcon: const Icon(Icons.keyboard),
                             hintText: "write message here...",
+                            hintStyle: TextStyle(color: Colors.grey),
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(25))),
                       )),

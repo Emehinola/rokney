@@ -10,11 +10,11 @@ class PostContainer extends StatelessWidget {
   bool? myPost;
   bool? verified;
   List<String>? images;
-  UserProfile? userProfile;
+  UserProfile userProfile;
 
   PostContainer(
       {this.myPost = false,
-      this.userProfile,
+      required this.userProfile,
       this.username,
       this.subtitle,
       this.images,
@@ -28,15 +28,15 @@ class PostContainer extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(height: 10),
           GestureDetector(
             onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (BuildContext context) =>
-                        ProfilePage(userProfile: userProfile))),
+                    builder: (BuildContext context) => ProfilePage())),
             child: PostCustomTile(
                 verified: verified,
-                profileImage: userProfile!.profileImage,
+                profileImage: userProfile.profileImage,
                 myPost: myPost,
                 name: username,
                 subtitle: "posted by me"),
@@ -48,8 +48,7 @@ class PostContainer extends StatelessWidget {
                   style: TextStyle(
                       color: Theme.of(context).textTheme.bodyText1!.color))),
           Container(
-            height: 200,
-            width: double.infinity,
+            height: 300,
             child: PageView(
                 scrollDirection: Axis.horizontal,
                 children: List<Widget>.generate(
