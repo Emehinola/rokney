@@ -36,13 +36,13 @@ class QueryMutation {
   }
 
   // logging user in
-  String login(String email_or_username, String password) {
+  String login() {
     return """
-      mutation {
-        login(
+      mutation logMeIn(\$username: String!, \$password: String!) {
+        login (
           userData: {
-            username: "$email_or_username",
-            password: "$password"
+            username: \$username,
+            password: \$password
           }
         ){
           errors
@@ -75,6 +75,7 @@ class QueryMutation {
           profile{
             following,
             followers,
+            imageUrl,
             about,
             address,
             professions,
@@ -111,13 +112,109 @@ class QueryMutation {
   // profile update mutation
   String updateProfile() {
     return """
-      mutation updateMyProfile(\$userEmail: String!, \$bio: String!, \$about: String!, \$professions: String!, \$username: String!, \$address: String!){
-        updateProfile(profileUpdateInput: {userEmail: \$userEmail, bio: \$bio, about: \$about, professions: \$professions, username: \$username, address: \$address}){
+      mutation updateMyProfile(\$userEmail: String!, \$bio: String, \$about: String, \$professions: String, \$username: String, \$address: String, \$profilePic: Upload){
+        updateProfile(profileUpdateInput: {userEmail: \$userEmail, bio: \$bio, about: \$about, professions: \$professions, username: \$username, address: \$address, profilePic: \$profilePic}){
           success
           error
         }
-
       }
+    """;
+  }
+
+  // getting posts related queries
+
+  // create post
+  String createPost() {
+    return """
+      mutation createPost(\$userEmail: String!, \$content: String, \$subtitle:String, \$images: [Upload!]){
+        createPost(post: {userEmail: \$userEmail, content: \$content, subtitle: \$subtitle, images: \$images}){
+          success
+          error
+        }
+      }
+    """;
+  }
+
+// all posts
+  String getPosts() {
+    return """
+    query getPosts{
+      posts{
+        id
+        content
+        subtitle
+        commentSet{
+          id
+        }
+        likeSet{
+          user{
+            email
+            username
+          }
+          liked
+          post{
+            content
+          }
+        }
+        user{
+          username
+          email
+          profile{
+            verifiedUser
+            imageUrl
+          }
+        }
+        filealbumSet{
+          images
+          imageUrl
+        }
+      }
+    }
+  """;
+  }
+
+  // comments query
+  String getComment() {
+    return """
+      query getComments(\$postId: Int!){
+        comments(postId: \$postId){
+          post{
+            content
+          }
+          content
+          time
+          user{
+            username
+            profile{
+              imageUrl
+            }
+          }
+        }
+      }
+    """;
+  }
+
+  // creating comment
+  String createComment() {
+    return """
+      mutation createCommentForPost(\$content: String!, \$email: String!, \$postId: Int){
+        createComment(comment: {content: \$content, email: \$email, postId: \$postId}){
+          success
+          error
+        }
+      }
+    """;
+  }
+
+  // creating post like
+  String createLike() {
+    return """
+      mutation createLike(\$postId: Int!, \$userEmail: String!){
+        createLike(like: {postId: \$postId, userEmail: \$userEmail}){
+          success
+          error
+  }
+}
     """;
   }
 }

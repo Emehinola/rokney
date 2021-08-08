@@ -39,9 +39,10 @@ class _SplashState extends State<Splash> {
     };
 
     var result = await _graphQLConfiguration.clientToQuery().mutate(
-        MutationOptions(
-            document:
-                gql(_queryMutation.login(data['email'], data['password']))));
+            MutationOptions(document: gql(_queryMutation.login()), variables: {
+          "username": data['email'],
+          "password": data['password']
+        }));
 
     return result;
   }
@@ -75,8 +76,8 @@ class _SplashState extends State<Splash> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const CircularProgressIndicator();
                     } else if ((snapshot.connectionState ==
-                            ConnectionState.done) &&
-                        snapshot.data!['login']['success']) {
+                        ConnectionState.done)) {
+                      // login user
                       return NavigationScreen();
                     } else {
                       // print("error: ${snapshot.data!['login']['errors']}");

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rokney/backends/graphql_config.dart';
 import 'package:rokney/backends/graphql_queries.dart';
-import 'package:rokney/custom_widgets/customs.dart';
 import 'package:rokney/custom_widgets/customs_export.dart';
 import 'package:rokney/screens/navigation_screen.dart';
 import 'package:rokney/screens/screens.dart';
@@ -40,40 +39,55 @@ class _LoginState extends State<Login> {
       // print("box: ${_graphQLConfiguration.box.values}");
 
       var result = await client.mutate(MutationOptions(
-          document: gql(_queryMutation.login(email, password))));
+          document: gql(_queryMutation.login()),
+          variables: {"username": email, "password": password}));
 
-      // getting data from result
-      if (result.data!['login']['success']) {
-        client
-            .mutate(MutationOptions(
-                document: gql(_queryMutation.authenticate(email, password))))
-            .then((value) {
-          if (value.data!['tokenAuth']['success']) {
-            _graphQLConfiguration.box
-              ..put('loggedIn', true) // sets that the user is logged in
-              ..put('myEmail',
-                  email); // sets the logged in user email in cache memory
+      // checking internet access
+      CheckInternet().checkInternet().then((hasInternetAccess) {
+        if (hasInternetAccess) {
+          // getting data from result
+          if (result.data!['login']['success']) {
+            client
+                .mutate(MutationOptions(
+                    document:
+                        gql(_queryMutation.authenticate(email, password))))
+                .then((value) {
+              if (value.data!['tokenAuth']['success']) {
+                _graphQLConfiguration.box
+                  ..put('loggedIn', true) // sets that the user is logged in
+                  ..put('myEmail',
+                      email); // sets the logged in user email in cache memory
 
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) => NavigationScreen()));
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => NavigationScreen()));
+              } else {
+                //
+              }
+            });
           } else {
-            //
+            setState(() {
+              isLoading = false;
+            });
+            if (result.data!['login']['errors'] != null) {
+              setState(() {
+                errorMessage = result.data!['login']['errors'];
+              });
+            } else {
+              //
+            }
           }
-        });
-      } else {
-        setState(() {
-          isLoading = false;
-        });
-        if (result.data!['login']['errors'] != null) {
-          setState(() {
-            errorMessage = result.data!['login']['errors'];
-          });
         } else {
-          //
+          // NO INTERNET
+          // ScaffoldMessengerState().showSnackBar(snackBar('No internet access',
+          //     Icons.info)); // snackbar imported from customs.dart
+          setState(() {
+            isLoading = false; // stops loading
+            errorMessage = "No internet access on device";
+          });
         }
-      }
+      });
     } else {
       //
     }
@@ -155,7 +169,12 @@ class _LoginState extends State<Login> {
                               hintText: "email",
                               hintStyle: const TextStyle(color: Colors.grey),
                               suffix: isLoading
-                                  ? const CircularProgressIndicator()
+                                  ? Container(
+                                      alignment: Alignment.center,
+                                      height: 10,
+                                      width: 10,
+                                      child: const CircularProgressIndicator(
+                                          color: Colors.green))
                                   : null,
                               prefixIcon: const Icon(
                                 Icons.email,
@@ -196,7 +215,12 @@ class _LoginState extends State<Login> {
                               hintText: "password",
                               hintStyle: const TextStyle(color: Colors.grey),
                               suffix: isLoading
-                                  ? const CircularProgressIndicator()
+                                  ? Container(
+                                      alignment: Alignment.center,
+                                      height: 10,
+                                      width: 10,
+                                      child: const CircularProgressIndicator(
+                                          color: Colors.green))
                                   : null,
                               prefixIcon: const Icon(
                                 Icons.password,
@@ -214,11 +238,22 @@ class _LoginState extends State<Login> {
                 SizedBox(
                   height: height * 0.02,
                 ),
-                InkWell(
-                  onTap: () =>
-                      login(_emailController.text, _passwordController.text),
-                  child: CustomButton(
-                    text: "LOGIN",
+                Container(
+                  width: 300,
+                  height: 40,
+                  child: OutlinedButton(
+                    onPressed: () =>
+                        login(_emailController.text, _passwordController.text),
+                    child: Text("LOGIN",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 2)),
+                    style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(20))),
                   ),
                 ),
                 const SizedBox(
@@ -227,13 +262,22 @@ class _LoginState extends State<Login> {
                 Text("Don't have an account yet?",
                     style: TextStyle(
                         color: Theme.of(context).textTheme.bodyText1!.color)),
-                InkWell(
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) => SignUp())),
-                  child: CustomButton(
-                    text: "SIGN UP",
+                Container(
+                  width: 300,
+                  height: 40,
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) => SignUp())),
+                    child: Text("SIGN UP",
+                        style:
+                            TextStyle(color: Colors.white, letterSpacing: 2)),
+                    style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.deepOrange,
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(20))),
                   ),
                 ),
                 SizedBox(
@@ -242,14 +286,23 @@ class _LoginState extends State<Login> {
                 Text("Forgot your password?",
                     style: TextStyle(
                         color: Theme.of(context).textTheme.bodyText1!.color)),
-                InkWell(
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              RecoverPassword())),
-                  child: CustomButton(
-                    text: "RECOVER PASSWORD",
+                Container(
+                  width: 300,
+                  height: 40,
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                RecoverPassword())),
+                    child: Text("RECOVER PASSWORD",
+                        style:
+                            TextStyle(color: Colors.white, letterSpacing: 2)),
+                    style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(20))),
                   ),
                 ),
                 const SizedBox(height: 10)

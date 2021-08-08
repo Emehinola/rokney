@@ -89,6 +89,7 @@ class _MessageScreenState extends State<MessageScreen>
                     ),
                   ),
                   Divider(
+                    indent: 60,
                     color: ColorPalette().mainColor,
                   ),
                   CustomTile(
@@ -99,6 +100,7 @@ class _MessageScreenState extends State<MessageScreen>
                     subtitle: "Delivered",
                   ),
                   Divider(
+                    indent: 60,
                     color: ColorPalette().mainColor,
                   ),
                   CustomTile(
@@ -109,6 +111,7 @@ class _MessageScreenState extends State<MessageScreen>
                     subtitle: "Sending...",
                   ),
                   Divider(
+                    indent: 60,
                     color: ColorPalette().mainColor,
                   ),
                   CustomTile(
@@ -119,6 +122,7 @@ class _MessageScreenState extends State<MessageScreen>
                     subtitle: "pending...",
                   ),
                   Divider(
+                    indent: 60,
                     color: ColorPalette().mainColor,
                   ),
                   CustomTile(
@@ -129,6 +133,7 @@ class _MessageScreenState extends State<MessageScreen>
                     subtitle: "Delivered",
                   ),
                   Divider(
+                    indent: 60,
                     color: ColorPalette().mainColor,
                   ),
                   CustomTile(
@@ -139,6 +144,7 @@ class _MessageScreenState extends State<MessageScreen>
                     subtitle: "Delivered",
                   ),
                   Divider(
+                    indent: 60,
                     color: ColorPalette().mainColor,
                   ),
                   CustomTile(
@@ -149,6 +155,7 @@ class _MessageScreenState extends State<MessageScreen>
                     subtitle: "Delivered",
                   ),
                   Divider(
+                    indent: 60,
                     color: ColorPalette().mainColor,
                   ),
                   CustomTile(
@@ -159,6 +166,7 @@ class _MessageScreenState extends State<MessageScreen>
                     subtitle: "Delivered",
                   ),
                   Divider(
+                    indent: 60,
                     color: ColorPalette().mainColor,
                   ),
                   CustomTile(
@@ -169,6 +177,7 @@ class _MessageScreenState extends State<MessageScreen>
                     subtitle: "Delivered",
                   ),
                   Divider(
+                    indent: 60,
                     color: ColorPalette().mainColor,
                   ),
                   CustomTile(

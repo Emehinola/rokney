@@ -6,7 +6,6 @@ import 'package:rokney/custom_widgets/customs.dart';
 import 'package:rokney/custom_widgets/customs_export.dart';
 import 'package:rokney/screens/login.dart';
 import 'package:rokney/screens/screens.dart';
-import 'package:rokney/screens/screens.dart';
 import 'package:rokney/backends/backends.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 
@@ -37,7 +36,7 @@ class _SignUpState extends State<SignUp> {
     super.initState();
   }
 
-  void createUserAccount(email, username, password) async {
+  void createUserAccount(email, username, password) {
     // function for creating user
 
     // checks if the user entered the correct input format for each input field
@@ -46,62 +45,71 @@ class _SignUpState extends State<SignUp> {
         isLoading = true;
       });
 
-      var client =
-          _graphQLConfiguration.clientToQuery(); // returns the signUP link
-      var result = await client.mutate(MutationOptions(
-          document: gql(queryMutation.register(email, username, password)),
-          onError: (error) {
-            print("OnError: ${error.toString()}");
-          }));
+      CheckInternet().checkInternet().then((internetAvailable) async {
+        if (internetAvailable) {
+          var client =
+              _graphQLConfiguration.clientToQuery(); // returns the signUP link
+          var result = await client.mutate(MutationOptions(
+              document: gql(queryMutation.register(email, username, password)),
+              onError: (error) {
+                print("OnError: ${error.toString()}");
+              }));
 
-      if (result.data!['register']['success']) {
-        client
-            .mutate(MutationOptions(
-                document: gql(queryMutation.login(email, password))))
-            .then((value) {
-          if (value.data!['login']['success']) {
-            _graphQLConfiguration.box.put('loggedIn', true);
-            _graphQLConfiguration.box
-              ..put('myEmail', email)
-              ..put('username', username)
-              ..put('password',
-                  password); // saves the user's data to the local device
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) => NavigationScreen()));
+          if (result.data!['register']['success']) {
+            client
+                .mutate(MutationOptions(
+                    document: gql(queryMutation.login()),
+                    variables: {"username": email, "password": password}))
+                .then((value) {
+              if (value.data!['login']['success']) {
+                _graphQLConfiguration.box.put('loggedIn', true);
+                _graphQLConfiguration.box
+                  ..put('myEmail', email)
+                  ..put('username', username)
+                  ..put('password',
+                      password); // saves the user's data to the local device
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => NavigationScreen()));
+              } else {
+                //
+              }
+            });
           } else {
-            //
+            setState(() {
+              isLoading = false;
+            });
+
+            // custom error for email
+            if (result.data!['register']['errors']['email'] != null) {
+              setState(() {
+                emailError =
+                    result.data!['register']['errors']['email'][0]['message'];
+              });
+            }
+
+            // custom error for username
+            if (result.data!['register']['errors']['username'] != null) {
+              setState(() {
+                usernameError = result.data!['register']['errors']['username']
+                    [0]['message'];
+              });
+            }
+
+            if (result.data!['register']['errors']['password'] != null) {
+              setState(() {
+                passwordError = result.data!['register']['errors']['password']
+                    [0]['message'];
+              });
+            }
           }
-        });
-      } else {
-        setState(() {
-          isLoading = false;
-        });
-
-        // custom error for email
-        if (result.data!['register']['errors']['email'] != null) {
-          setState(() {
-            emailError =
-                result.data!['register']['errors']['email'][0]['message'];
-          });
+        } else {
+          // NO INTERNET CONNECTION
+          ScaffoldMessenger.of(context)
+              .showSnackBar(snackBar("No data connection", Icons.info));
         }
-
-        // custom error for username
-        if (result.data!['register']['errors']['username'] != null) {
-          setState(() {
-            usernameError =
-                result.data!['register']['errors']['username'][0]['message'];
-          });
-        }
-
-        if (result.data!['register']['errors']['password'] != null) {
-          setState(() {
-            passwordError =
-                result.data!['register']['errors']['password'][0]['message'];
-          });
-        }
-      }
+      });
     } else {
       //
     }
@@ -130,7 +138,9 @@ class _SignUpState extends State<SignUp> {
                   width: width * 0.3,
                 ),
                 Text(
-                  isLoading ? 'Validating...' : 'Create a new Account!',
+                  isLoading
+                      ? 'Validating... please wait'
+                      : 'Create a new Account!',
                   style: TextStyle(
                       color: isLoading
                           ? Colors.green
@@ -271,15 +281,21 @@ class _SignUpState extends State<SignUp> {
                 SizedBox(
                   height: height * 0.02,
                 ),
-                GestureDetector(
-                  child: CustomButton(
-                    text: "SIGN UP",
+                Container(
+                  width: 300,
+                  height: 40,
+                  child: OutlinedButton(
+                    onPressed: () => createUserAccount(_emailController.text,
+                        _usernameController.text, _passwordController.text),
+                    child: Text("SIGN UP",
+                        style:
+                            TextStyle(color: Colors.white, letterSpacing: 2)),
+                    style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(20))),
                   ),
-                  onTap: () {
-                    FocusNode().unfocus;
-                    createUserAccount(_emailController.text,
-                        _usernameController.text, _passwordController.text);
-                  },
                 ),
                 const SizedBox(
                   height: 30,
@@ -289,13 +305,22 @@ class _SignUpState extends State<SignUp> {
                   style: TextStyle(
                       color: Theme.of(context).textTheme.bodyText1!.color),
                 ),
-                InkWell(
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) => Login())),
-                  child: CustomButton(
-                    text: "LOGIN",
+                Container(
+                  width: 300,
+                  height: 40,
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) => Login())),
+                    child: Text("LOGIN",
+                        style:
+                            TextStyle(color: Colors.white, letterSpacing: 2)),
+                    style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(20))),
                   ),
                 ),
                 SizedBox(
@@ -306,14 +331,23 @@ class _SignUpState extends State<SignUp> {
                   style: TextStyle(
                       color: Theme.of(context).textTheme.bodyText1!.color),
                 ),
-                InkWell(
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) =>
-                              RecoverPassword())),
-                  child: CustomButton(
-                    text: "RECOVER PASSWORD",
+                Container(
+                  width: 300,
+                  height: 40,
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                RecoverPassword())),
+                    child: Text("RECOVER PASSWORD",
+                        style:
+                            TextStyle(color: Colors.white, letterSpacing: 2)),
+                    style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.white),
+                            borderRadius: BorderRadius.circular(20))),
                   ),
                 ),
                 const SizedBox(height: 10)

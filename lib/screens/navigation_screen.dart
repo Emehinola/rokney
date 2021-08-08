@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -20,7 +19,7 @@ class NavigationScreen extends StatefulWidget {
 
 class _NavigationScreenState extends State<NavigationScreen>
     with SingleTickerProviderStateMixin {
-  ScrollController? _scrollController;
+  ScrollController _scrollController = ScrollController();
   bool? isScrolledUp;
 
   StreamSubscription? subscription;
@@ -73,15 +72,13 @@ class _NavigationScreenState extends State<NavigationScreen>
       });
     });
 
-    isScrolledUp = false;
-    _scrollController = ScrollController();
-    _scrollController?.addListener(() {
-      if (_scrollController?.position.userScrollDirection ==
+    _scrollController.addListener(() {
+      if (_scrollController.position.userScrollDirection ==
           ScrollDirection.forward) {
         setState(() {
           isScrolledUp = true;
         });
-      } else if (_scrollController?.position.userScrollDirection ==
+      } else if (_scrollController.position.userScrollDirection ==
           ScrollDirection.reverse) {
         setState(() {
           isScrolledUp = false;
@@ -94,7 +91,8 @@ class _NavigationScreenState extends State<NavigationScreen>
   @override
   void dispose() {
     // _tabController.dispose();
-    _scrollController?.dispose();
+    ScaffoldMessenger.of(context).clearSnackBars();
+    _scrollController.dispose();
     subscription!.cancel();
     super.dispose();
   }
@@ -250,12 +248,7 @@ class _NavigationScreenState extends State<NavigationScreen>
                 SliverAppBar(
                   backgroundColor: const Color.fromRGBO(11, 77, 110, 1),
                   // ignore: avoid_unnecessary_containers
-                  leading: InkWell(
-                    onTap: () => Scaffold.of(context).openDrawer(),
-                    child: Container(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Image.asset("./assets/images/social.png")),
-                  ),
+
                   // Row(
                   //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   //   children: const [
@@ -270,10 +263,13 @@ class _NavigationScreenState extends State<NavigationScreen>
                   elevation: 2.0,
                   snap: true,
                   floating: true,
-                  pinned: true,
+                  pinned: false,
                   title: const Text(
-                    "roKney",
-                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                    "rokney",
+                    style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Vidaloka-Regular'),
                   ),
                   actions: <Widget>[
                     Material(
@@ -289,9 +285,6 @@ class _NavigationScreenState extends State<NavigationScreen>
                                 builder: (BuildContext context) =>
                                     SearchScreen())),
                       ),
-                    ),
-                    const SizedBox(
-                      width: 10,
                     ),
                     Material(
                       color: Colors.transparent,
@@ -321,58 +314,27 @@ class _NavigationScreenState extends State<NavigationScreen>
                               context,
                               MaterialPageRoute(
                                   builder: (BuildContext context) =>
-                                      ProfilePage()))),
-                    ),
-                    const SizedBox(
-                      width: 10,
+                                      ProfilePage(
+                                        myProfile: true,
+                                      )))),
                     ),
                   ],
                   bottom: TabBar(
                       isScrollable: true,
                       indicatorColor: Theme.of(context).primaryColor,
-                      indicatorPadding: EdgeInsets.only(top: 4.0),
+                      indicatorPadding: EdgeInsets.zero,
                       indicatorWeight: 3.0,
-                      tabs: const <Widget>[
-                        TabContainer(
-                          icon: Icons.home,
-                          text: "Home",
-                        ),
-                        TabContainer(
-                          icon: Icons.food_bank_sharp,
-                          text: "Food",
-                        ),
-                        TabContainer(
-                          icon: Icons.female,
-                          text: "Date",
-                        ),
-                        TabContainer(
-                          icon: Icons.restaurant_menu,
-                          text: "Restaurant",
-                        ),
-                        TabContainer(
-                          icon: Icons.sports,
-                          text: "Sports",
-                        ),
-                        TabContainer(
-                          icon: Icons.collections_sharp,
-                          text: "Fashion",
-                        ),
-                        TabContainer(
-                          icon: Icons.phone_iphone,
-                          text: "Phones",
-                        ),
-                        TabContainer(
-                          icon: Icons.book,
-                          text: "Books",
-                        ),
-                        TabContainer(
-                          icon: Icons.wash_outlined,
-                          text: "Dry cleaning",
-                        ),
-                        TabContainer(
-                          icon: Icons.fitness_center,
-                          text: "Gym",
-                        ),
+                      tabs: <Widget>[
+                        chipWidget(Icons.home, 'home'),
+                        chipWidget(Icons.bed, 'appartment'),
+                        chipWidget(Icons.book, 'book'),
+                        chipWidget(Icons.food_bank_rounded, 'food'),
+                        chipWidget(Icons.book_rounded, 'tutorial'),
+                        chipWidget(Icons.ac_unit, 'clothes'),
+                        chipWidget(Icons.ac_unit, 'shoes'),
+                        chipWidget(Icons.phone, 'phones and accessories'),
+                        chipWidget(Icons.wash, 'laundry'),
+                        chipWidget(Icons.fitness_center_sharp, 'gym'),
                       ]),
                 )
               ];

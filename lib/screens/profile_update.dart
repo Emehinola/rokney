@@ -87,6 +87,9 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: ColorPalette().mainColor,
+          leading: IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(Icons.arrow_back_ios)),
           title: const Text("rokney app"),
         ),
         body: LayoutBuilder(
@@ -98,8 +101,7 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
             child: Container(
               width: width * 0.9,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: Colors.white10),
+                  borderRadius: BorderRadius.circular(12), color: Colors.white),
               child: SingleChildScrollView(
                   child: Center(
                 child: Container(
@@ -112,6 +114,7 @@ class _ProfileUpdateScreenState extends State<ProfileUpdateScreen> {
                         height: 15,
                       ),
                       TextField(
+                        enabled: false,
                         controller: usernameContrl,
                         style: const TextStyle(color: Colors.black),
                         decoration: InputDecoration(

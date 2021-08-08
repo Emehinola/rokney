@@ -207,7 +207,8 @@ class _ProductCheckoutScreenState extends State<ProductCheckoutScreen> {
 }
 
 class PostCheckoutContainer extends StatelessWidget {
-  String? username, subtitle, image;
+  String? username, subtitle;
+  String image;
   bool? myPost;
   bool? verified;
 
@@ -215,7 +216,7 @@ class PostCheckoutContainer extends StatelessWidget {
       {this.myPost = false,
       this.username,
       this.subtitle,
-      this.image,
+      required this.image,
       this.verified});
 
   @override
@@ -226,7 +227,7 @@ class PostCheckoutContainer extends StatelessWidget {
         children: [
           PostCustomTile(
               verified: verified,
-              profileImage: image,
+              profileImageUrl: image,
               myPost: myPost,
               name: username,
               subtitle: subtitle),
@@ -237,7 +238,7 @@ class PostCheckoutContainer extends StatelessWidget {
                 style: TextStyle(
                     color: Theme.of(context).textTheme.bodyText1!.color),
               )),
-          Image.asset(image!),
+          Image.asset(image),
           Container(
             padding: const EdgeInsets.all(12.0),
             child: Row(children: [

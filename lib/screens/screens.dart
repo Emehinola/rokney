@@ -16,3 +16,5 @@ export 'package:rokney/screens/profile_image.dart';
 export 'package:rokney/screens/post_creation_navigation.dart';
 export 'package:rokney/screens/settings.dart';
 export 'package:rokney/screens/profile_update.dart';
+export 'package:rokney/screens/comments.dart';
+export 'package:rokney/screens/create_regular_post.dart';

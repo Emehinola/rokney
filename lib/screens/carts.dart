@@ -17,25 +17,25 @@ class _CartScreenState extends State<CartScreen> {
           const SizedBox(
             height: 15,
           ),
-          PostContainer(userProfile: UserProfile(
-                                          about:
-                                              '"Talks about #technology, #programming, #webdevelopment, and #mobiledevelopment"',
-                                          address: '"University of Lagos, Unilag\n Nigeria."',
-                                          followers: 32134,
-                                          following: 90,
-                                          username: 'Jumia',
-                                          profileImage: './assets/images/d1.png',
-                                          professions: [
-                                            'Web dev',
-                                            'Build robots'
-                                          ]),
-            action: "Checkout",
-            images: const ["./assets/images/d1.png"],
-            myPost: false,
-            subtitle: "phone",
-            username: "Jumia",
-            verified: true,
-          )
+          // PostContainer(userProfile: UserProfile(
+          //                                 about:
+          //                                     '"Talks about #technology, #programming, #webdevelopment, and #mobiledevelopment"',
+          //                                 address: '"University of Lagos, Unilag\n Nigeria."',
+          //                                 followers: 32134,
+          //                                 following: 90,
+          //                                 username: 'Jumia',
+          //                                 profileImage: './assets/images/d1.png',
+          //                                 professions: [
+          //                                   'Web dev',
+          //                                   'Build robots'
+          //                                 ]),
+          //   action: "Checkout",
+          //   images: const ["./assets/images/d1.png"],
+          //   myPost: false,
+          //   subtitle: "phone",
+          //   username: "Jumia",
+          //   verified: true,
+          // )
         ],
       ),
     );

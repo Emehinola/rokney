@@ -96,12 +96,12 @@ class IconLabel extends StatelessWidget {
           Container(
             decoration: const BoxDecoration(
                 border: Border(bottom: BorderSide(color: Colors.white))),
-            child: Icon(icon, size: 30),
+            child: Icon(icon, size: 27),
           ),
           label != null
               ? Positioned(
                   top: -1,
-                  right: 1,
+                  right: 4,
                   child: Container(
                       height: 25,
                       width: 25,
@@ -170,7 +170,10 @@ class CustomTile extends StatelessWidget {
                     onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (BuildContext context) => ProfileImage())),
+                            builder: (BuildContext context) => ProfileImage(
+                                  profileImageUrl:
+                                      'http://10.0.2.2/media/default.png',
+                                ))),
                     child: Hero(
                       tag: 'image',
                       child: CircleAvatar(
@@ -243,4 +246,36 @@ SnackBar snackBar(String message, IconData icon) {
       )),
     ),
   );
+}
+
+// online user indicator
+Container onlineIndicator() {
+  return Container(
+      height: 20,
+      width: 20,
+      decoration: BoxDecoration(
+          color: Colors.green,
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(width: 2, color: Colors.white)));
+}
+
+Chip chipWidget(IconData icon, String text) {
+  return Chip(
+    label: Text(
+      text,
+      style: TextStyle(fontWeight: FontWeight.bold),
+    ),
+    avatar: Icon(
+      icon,
+      color: Colors.red,
+    ),
+  );
+}
+
+Container verticalDivider(BuildContext context) {
+  return Container(
+      height: 30,
+      width: 1,
+      color: Theme.of(context).textTheme.bodyText1!.color,
+      margin: const EdgeInsets.symmetric(horizontal: 10.0));
 }
